@@ -1,6 +1,5 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {MainNavigatorContext} from '../../navigation/MainNavigator';
-import RNIcon from 'react-native-vector-icons/AntDesign';
 import {
   Box,
   Button,
@@ -17,11 +16,53 @@ import {
   CheckboxIcon,
   CheckboxLabel,
   Image,
+  InputSlot,
+  InputIcon,
+  FormControlErrorText,
 } from '@gluestack-ui/themed';
 import {appImages} from '../../images';
+import {
+  AlertCircleIcon,
+  EyeIcon,
+  EyeOffIcon,
+  LockIcon,
+  SmartphoneIcon,
+} from 'lucide-react-native';
+import {FormControlErrorIcon} from '@gluestack-ui/themed';
+import {FormControlError} from '@gluestack-ui/themed';
 
 const LoginScreen = ({navigation}) => {
   const {setIsSignedIn} = useContext(MainNavigatorContext);
+
+  const [showPin, setShowPin] = useState(false);
+  const [isLoginInvalid, setIsLoginInvalid] = useState(false);
+  const [loginFields, setLoginFields] = useState({
+    mobile: '',
+    pin: '',
+  });
+
+  const handleShowPin = () => {
+    setShowPin(showPin => {
+      return !showPin;
+    });
+  };
+
+  const onChangeField = (field, value) => {
+    let tempFields = {...loginFields};
+    tempFields[field] = value;
+    setLoginFields(tempFields);
+  };
+
+  const onSignInPress = () => {
+    if (loginFields.mobile == '09123456789' && loginFields.pin == '123456') {
+      setIsSignedIn(true);
+      setIsLoginInvalid(false);
+    } else {
+      console.log('Invalid Credentials');
+      setIsLoginInvalid(true);
+    }
+  };
+
   return (
     <Box w="100%" h="100%">
       {/* Logo */}
@@ -39,36 +80,59 @@ const LoginScreen = ({navigation}) => {
       <Box style={{marginBottom: '20%'}} />
       {/* Form */}
       <Box w={300} style={{borderWidth: 0, alignSelf: 'center'}}>
-        {/* Mobile Input */}
-        <FormControl>
-          <Center>
-            <HStack style={{alignItems: 'center'}}>
-              <RNIcon name="mobile1" size={20} style={{marginRight: 10}} />
-              <Input style={{flex: 1}}>
-                <InputField placeholder="Mobile" bg="$white" />
-              </Input>
-            </HStack>
-          </Center>
-        </FormControl>
-        <Box h={10} />
-        {/* PIN Input */}
-        <FormControl>
-          <Center>
-            <HStack style={{alignItems: 'center'}}>
-              <RNIcon name="lock1" size={20} style={{marginRight: 10}} />
-              <Input style={{flex: 1}}>
-                <InputField
-                  type="password"
-                  placeholder="PIN (6 digit)"
-                  bg="$white"
-                />
-              </Input>
-            </HStack>
-          </Center>
+        <FormControl isInvalid={isLoginInvalid}>
+          {/* Mobile Input */}
+          <FormControl>
+            <Center>
+              <HStack style={{alignItems: 'center'}}>
+                <Input style={{flex: 1}}>
+                  <InputSlot px="$3" bg="$white">
+                    <InputIcon as={SmartphoneIcon} />
+                  </InputSlot>
+                  <InputField
+                    placeholder="Mobile"
+                    bg="$white"
+                    onChangeText={text => onChangeField('mobile', text)}
+                  />
+                </Input>
+              </HStack>
+            </Center>
+          </FormControl>
+          <Box h={10} />
+          {/* PIN Input */}
+          <FormControl>
+            <Center>
+              <HStack style={{alignItems: 'center'}}>
+                <Input style={{flex: 1}}>
+                  <InputSlot px="$3" bg="$white">
+                    <InputIcon as={LockIcon} />
+                  </InputSlot>
+                  <InputField
+                    type={showPin ? 'text' : 'password'}
+                    placeholder="PIN (6 digit)"
+                    bg="$white"
+                    onChangeText={text => onChangeField('pin', text)}
+                  />
+                  <InputSlot px="$3" onPress={handleShowPin} bg="$white">
+                    <InputIcon
+                      as={showPin ? EyeIcon : EyeOffIcon}
+                      color="$darkBlue500"
+                    />
+                  </InputSlot>
+                </Input>
+              </HStack>
+            </Center>
+          </FormControl>
+          <FormControlError>
+            <FormControlErrorIcon as={AlertCircleIcon} />
+            <FormControlErrorText>
+              Your mobile and password doesn't match
+            </FormControlErrorText>
+          </FormControlError>
         </FormControl>
         <Box h={10} />
         {/* Sign In Button */}
-        <Button action="primary" onPress={() => setIsSignedIn(true)}>
+        <Button action="primary" onPress={onSignInPress}>
           <ButtonText>Sign In</ButtonText>
         </Button>
         <Box>

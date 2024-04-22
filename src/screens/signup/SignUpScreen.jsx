@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Box,
   Text,
@@ -9,10 +9,33 @@ import {
   Center,
   HStack,
   InputField,
+  InputSlot,
+  InputIcon,
 } from '@gluestack-ui/themed';
-import RNIcon from 'react-native-vector-icons/AntDesign';
+import {
+  EyeIcon,
+  EyeOffIcon,
+  LockIcon,
+  MailIcon,
+  SmartphoneIcon,
+  UserIcon,
+} from 'lucide-react-native';
 
 const SignUpScreen = () => {
+  const [showPin, setShowPin] = useState(false);
+  const [showConfirmPin, setShowConfirmPin] = useState(false);
+
+  const handleShowPin = () => {
+    setShowPin(showPin => {
+      return !showPin;
+    });
+  };
+
+  const handleShowConfirmPin = () => {
+    setShowConfirmPin(showConfirmPin => {
+      return !showConfirmPin;
+    });
+  };
   return (
     <Box w="100%" h="100%" style={{paddingTop: 20}}>
       {/* Profile Section */}
@@ -24,8 +47,10 @@ const SignUpScreen = () => {
         <FormControl>
           <Center>
             <HStack style={{alignItems: 'center'}}>
-              <RNIcon name="user" size={20} style={{marginRight: 10}} />
               <Input style={{flex: 1}}>
+                <InputSlot px="$3" bg="$white">
+                  <InputIcon as={UserIcon} />
+                </InputSlot>
                 <InputField placeholder="Full Name" bg="$white" />
               </Input>
             </HStack>
@@ -36,8 +61,10 @@ const SignUpScreen = () => {
         <FormControl>
           <Center>
             <HStack style={{alignItems: 'center'}}>
-              <RNIcon name="mobile1" size={20} style={{marginRight: 10}} />
               <Input style={{flex: 1}}>
+                <InputSlot px="$3" bg="$white">
+                  <InputIcon as={SmartphoneIcon} />
+                </InputSlot>
                 <InputField placeholder="Mobile" bg="$white" />
               </Input>
             </HStack>
@@ -48,8 +75,10 @@ const SignUpScreen = () => {
         <FormControl>
           <Center>
             <HStack style={{alignItems: 'center'}}>
-              <RNIcon name="mail" size={20} style={{marginRight: 10}} />
               <Input style={{flex: 1}}>
+                <InputSlot px="$3" bg="$white">
+                  <InputIcon as={MailIcon} />
+                </InputSlot>
                 <InputField placeholder="Email" bg="$white" />
               </Input>
             </HStack>
@@ -62,25 +91,49 @@ const SignUpScreen = () => {
         <Text size="lg" bold style={{marginBottom: 10}}>
           PIN
         </Text>
-        {/* Full Name Input */}
+        {/* PIN Input */}
         <FormControl>
           <Center>
             <HStack style={{alignItems: 'center'}}>
-              <RNIcon name="lock1" size={20} style={{marginRight: 10}} />
               <Input style={{flex: 1}}>
-                <InputField placeholder="PIN (6 digit)" bg="$white" />
+                <InputSlot px="$3" bg="$white">
+                  <InputIcon as={LockIcon} />
+                </InputSlot>
+                <InputField
+                  placeholder="PIN (6 digit)"
+                  bg="$white"
+                  type={showPin ? 'text' : 'password'}
+                />
+                <InputSlot px="$3" onPress={handleShowPin} bg="$white">
+                  <InputIcon
+                    as={showPin ? EyeIcon : EyeOffIcon}
+                    color="$darkBlue500"
+                  />
+                </InputSlot>
               </Input>
             </HStack>
           </Center>
         </FormControl>
         <Box h={10} />
-        {/* Mobile Input */}
+        {/* Confirm PIN Input */}
         <FormControl>
           <Center>
             <HStack style={{alignItems: 'center'}}>
-              <RNIcon name="lock1" size={20} style={{marginRight: 10}} />
               <Input style={{flex: 1}}>
-                <InputField placeholder="Confirm PIN (6 digit)" bg="$white" />
+                <InputSlot px="$3" bg="$white">
+                  <InputIcon as={LockIcon} />
+                </InputSlot>
+                <InputField
+                  placeholder="Confirm PIN (6 digit)"
+                  bg="$white"
+                  type={showConfirmPin ? 'text' : 'password'}
+                />
+                <InputSlot px="$3" onPress={handleShowConfirmPin} bg="$white">
+                  <InputIcon
+                    as={showConfirmPin ? EyeIcon : EyeOffIcon}
+                    color="$darkBlue500"
+                  />
+                </InputSlot>
               </Input>
             </HStack>
           </Center>
