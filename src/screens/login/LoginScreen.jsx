@@ -19,6 +19,8 @@ import {
   InputSlot,
   InputIcon,
   FormControlErrorText,
+  FormControlErrorIcon,
+  FormControlError,
 } from '@gluestack-ui/themed';
 import {appImages} from '../../images';
 import {
@@ -28,8 +30,6 @@ import {
   LockIcon,
   SmartphoneIcon,
 } from 'lucide-react-native';
-import {FormControlErrorIcon} from '@gluestack-ui/themed';
-import {FormControlError} from '@gluestack-ui/themed';
 
 const LoginScreen = ({navigation}) => {
   const {setIsSignedIn} = useContext(MainNavigatorContext);
@@ -37,8 +37,8 @@ const LoginScreen = ({navigation}) => {
   const [showPin, setShowPin] = useState(false);
   const [isLoginInvalid, setIsLoginInvalid] = useState(false);
   const [loginFields, setLoginFields] = useState({
-    mobile: '',
-    pin: '',
+    mobile: '09123456789',
+    pin: '123456',
   });
 
   const handleShowPin = () => {
@@ -92,6 +92,7 @@ const LoginScreen = ({navigation}) => {
                   <InputField
                     placeholder="Mobile"
                     bg="$white"
+                    value={loginFields.mobile}
                     onChangeText={text => onChangeField('mobile', text)}
                   />
                 </Input>
@@ -111,6 +112,7 @@ const LoginScreen = ({navigation}) => {
                     type={showPin ? 'text' : 'password'}
                     placeholder="PIN (6 digit)"
                     bg="$white"
+                    value={loginFields.pin}
                     onChangeText={text => onChangeField('pin', text)}
                   />
                   <InputSlot px="$3" onPress={handleShowPin} bg="$white">
