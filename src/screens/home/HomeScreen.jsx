@@ -10,16 +10,12 @@ import Speedometer, {
   Indicator,
   DangerPath,
 } from 'react-native-cool-speedometer';
-import {Box, Button} from '@gluestack-ui/themed';
+import {Box} from '@gluestack-ui/themed';
 import {primaryColor} from '../../constant/colors';
 import {Text as SvgText} from 'react-native-svg';
-import {ButtonText} from '@gluestack-ui/themed';
 
 const HomeScreen = () => {
-  const {setIsSignedIn} = useContext(MainNavigatorContext);
-
   const [gasValue, setGasValue] = useState(0);
-  const [gasStatus, setGasStatus] = useState('');
 
   useEffect(() => {
     let val = 0;
@@ -52,17 +48,19 @@ const HomeScreen = () => {
     return {color, status};
   };
 
+  const meterWidth = 350;
+
   return (
-    <View>
-      <Box alignItems="center" mt={20} zIndex={-1}>
+    <Box h="100%" justifyContent="center">
+      <Box alignItems="center" zIndex={-1}>
         <Speedometer
           value={gasValue}
           max={1000}
           angle={160}
           fontFamily="squada-one"
           accentColor={primaryColor}
-          width={300}
-          height={250}>
+          width={meterWidth}
+          height={meterWidth * 0.83333}>
           <Background angle={180} />
           <Arc strokeWidth={10} arcWidth={10} />
           <Needle />
@@ -79,8 +77,8 @@ const HomeScreen = () => {
                 {...textProps}
                 fontSize={40}
                 fill={handleProgressColor(gasValue).color}
-                x={300 / 2}
-                y={300 / 2 + 50}
+                x={meterWidth / 2}
+                y={meterWidth / 2 + meterWidth * 0.16666}
                 textAnchor="middle"
                 alignmentBaseline="middle"
                 fontFamily="squada-one">
@@ -96,8 +94,7 @@ const HomeScreen = () => {
         alignSelf="center"
         borderRadius={999}
         py={5}
-        bg={handleProgressColor(gasValue).color}
-        mt={-20}>
+        bg={handleProgressColor(gasValue).color}>
         <Text
           style={{
             fontSize: 28,
@@ -107,13 +104,7 @@ const HomeScreen = () => {
           {handleProgressColor(gasValue).status}
         </Text>
       </Box>
-      <Button
-        title="Sign Out"
-        onPress={() => setIsSignedIn(false)}
-        style={{marginTop: 100}}>
-        <ButtonText>Sign Out</ButtonText>
-      </Button>
-    </View>
+    </Box>
   );
 };
 
