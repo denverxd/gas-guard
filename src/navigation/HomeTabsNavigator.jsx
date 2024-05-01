@@ -2,7 +2,14 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/home/HomeScreen';
 import NotificationScreen from '../screens/notifications/NotificationScreen';
 import SettingsScreen from '../screens/settings/SettingsScreen';
-import {BellIcon, HomeIcon, SettingsIcon} from 'lucide-react-native';
+import {
+  BellIcon,
+  HistoryIcon,
+  HomeIcon,
+  SettingsIcon,
+} from 'lucide-react-native';
+import {Button, ButtonIcon} from '@gluestack-ui/themed';
+import {primaryColor} from '../constant/colors';
 
 const Tab = createBottomTabNavigator();
 
@@ -16,6 +23,11 @@ const HomeTabsNavigator = () => {
           tabBarIcon: ({color, size}) => <HomeIcon color={color} size={size} />,
           headerTitle: 'Gas Sensor Meter',
           headerTitleAlign: 'center',
+          headerRight: () => (
+            <Button variant="outline" borderWidth={0}>
+              <ButtonIcon size="xl" color={primaryColor} as={HistoryIcon} />
+            </Button>
+          ),
         }}
       />
       <Tab.Screen

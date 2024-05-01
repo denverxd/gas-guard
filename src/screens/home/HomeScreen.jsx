@@ -1,4 +1,3 @@
-import {View, Text} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import {MainNavigatorContext} from '../../navigation/MainNavigator';
 import Speedometer, {
@@ -10,7 +9,7 @@ import Speedometer, {
   Indicator,
   DangerPath,
 } from 'react-native-cool-speedometer';
-import {Box} from '@gluestack-ui/themed';
+import {Box, Text} from '@gluestack-ui/themed';
 import {primaryColor} from '../../constant/colors';
 import {Text as SvgText} from 'react-native-svg';
 

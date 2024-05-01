@@ -17,13 +17,13 @@ import React from 'react';
 
 const UpdateProfileScreen = () => {
   return (
-    <Box w={350} style={{alignSelf: 'center'}}>
+    <Box w="$full" style={{alignSelf: 'center'}}>
       <Box
-        w="100%"
-        px={30}
+        px={20}
         pb={30}
         pt={10}
-        mt={30}
+        mt={20}
+        mx={20}
         bgColor="$trueGray400"
         borderBottomEndRadius={50}>
         {/* Full Name Input */}
@@ -58,7 +58,11 @@ const UpdateProfileScreen = () => {
                 <InputSlot px="$3" bg="$white">
                   <InputIcon as={SmartphoneIcon} />
                 </InputSlot>
-                <InputField placeholder="Mobile" bg="$white" />
+                <InputField
+                  placeholder="Mobile"
+                  bg="$white"
+                  keyboardType="number-pad"
+                />
               </Input>
             </HStack>
           </Center>
@@ -77,7 +81,11 @@ const UpdateProfileScreen = () => {
                 <InputSlot px="$3" bg="$white">
                   <InputIcon as={MailIcon} />
                 </InputSlot>
-                <InputField placeholder="Email" bg="$white" />
+                <InputField
+                  placeholder="Email"
+                  bg="$white"
+                  keyboardType="email-address"
+                />
               </Input>
             </HStack>
           </Center>
@@ -86,7 +94,7 @@ const UpdateProfileScreen = () => {
           action="primary"
           variant="outline"
           mt={30}
-          borderRadius={999}
+          rounded="$full"
           bg="white">
           <ButtonText>Update</ButtonText>
         </Button>

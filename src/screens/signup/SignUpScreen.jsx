@@ -65,7 +65,11 @@ const SignUpScreen = () => {
                 <InputSlot px="$3" bg="$white">
                   <InputIcon as={SmartphoneIcon} />
                 </InputSlot>
-                <InputField placeholder="Mobile" bg="$white" />
+                <InputField
+                  placeholder="Mobile"
+                  bg="$white"
+                  keyboardType="number-pad"
+                />
               </Input>
             </HStack>
           </Center>
@@ -79,7 +83,11 @@ const SignUpScreen = () => {
                 <InputSlot px="$3" bg="$white">
                   <InputIcon as={MailIcon} />
                 </InputSlot>
-                <InputField placeholder="Email" bg="$white" />
+                <InputField
+                  placeholder="Email"
+                  bg="$white"
+                  keyboardType="email-address"
+                />
               </Input>
             </HStack>
           </Center>
@@ -102,6 +110,7 @@ const SignUpScreen = () => {
                 <InputField
                   placeholder="PIN (6 digit)"
                   bg="$white"
+                  keyboardType="number-pad"
                   type={showPin ? 'text' : 'password'}
                 />
                 <InputSlot px="$3" onPress={handleShowPin} bg="$white">
@@ -126,6 +135,7 @@ const SignUpScreen = () => {
                 <InputField
                   placeholder="Confirm PIN (6 digit)"
                   bg="$white"
+                  keyboardType="number-pad"
                   type={showConfirmPin ? 'text' : 'password'}
                 />
                 <InputSlot px="$3" onPress={handleShowConfirmPin} bg="$white">

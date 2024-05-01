@@ -95,6 +95,7 @@ const LoginScreen = ({navigation}) => {
                   <InputField
                     placeholder="Mobile"
                     bg="$white"
+                    keyboardType="number-pad"
                     value={loginFields.mobile}
                     onChangeText={text => onChangeField('mobile', text)}
                   />
@@ -115,6 +116,7 @@ const LoginScreen = ({navigation}) => {
                     type={showPin ? 'text' : 'password'}
                     placeholder="PIN (6 digit)"
                     bg="$white"
+                    keyboardType="number-pad"
                     value={loginFields.pin}
                     onChangeText={text => onChangeField('pin', text)}
                   />
@@ -150,12 +152,7 @@ const LoginScreen = ({navigation}) => {
               <CheckboxLabel>Remember me</CheckboxLabel>
             </Checkbox>
             {/* Forgot PIN */}
-            <Button
-              action="primary"
-              variant="link"
-              style={{borderRadius: 999}}
-              // onPress={() => navigation.navigate('SignUp')}
-            >
+            <Button action="primary" variant="link" rounded="$full" isDisabled>
               <ButtonText size="sm">Forgot PIN?</ButtonText>
             </Button>
           </HStack>

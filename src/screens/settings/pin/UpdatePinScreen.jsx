@@ -45,13 +45,13 @@ const UpdatePinScreen = () => {
     }
   };
   return (
-    <Box w={350} style={{alignSelf: 'center'}}>
+    <Box w="$full" style={{alignSelf: 'center'}}>
       <Box
-        w="100%"
-        px={30}
+        px={20}
         pb={30}
         pt={10}
-        mt={30}
+        mt={20}
+        mx={20}
         bgColor="$trueGray400"
         borderBottomEndRadius={50}>
         {/* Old PIN Input */}
@@ -71,6 +71,7 @@ const UpdatePinScreen = () => {
                   placeholder="PIN (6 digit)"
                   bg="$white"
                   type={showOldPin ? 'text' : 'password'}
+                  keyboardType="number-pad"
                 />
                 <InputSlot
                   px="$3"
@@ -103,6 +104,7 @@ const UpdatePinScreen = () => {
                   placeholder="PIN (6 digit)"
                   bg="$white"
                   type={showNewPin ? 'text' : 'password'}
+                  keyboardType="number-pad"
                 />
                 <InputSlot
                   px="$3"
@@ -135,6 +137,7 @@ const UpdatePinScreen = () => {
                   placeholder="Confirm PIN (6 digit)"
                   bg="$white"
                   type={showConfirmPin ? 'text' : 'password'}
+                  keyboardType="number-pad"
                 />
                 <InputSlot
                   px="$3"
@@ -153,7 +156,7 @@ const UpdatePinScreen = () => {
           action="primary"
           variant="outline"
           mt={30}
-          borderRadius={999}
+          rounded="$full"
           bg="white">
           <ButtonText>Update</ButtonText>
         </Button>
