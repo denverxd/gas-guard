@@ -4,7 +4,6 @@ import {
   ButtonIcon,
   ButtonText,
   HStack,
-  ScrollView,
 } from '@gluestack-ui/themed';
 import {
   ChevronRightIcon,
@@ -21,7 +20,7 @@ const SettingsScreen = ({navigation}) => {
   const {setIsSignedIn} = useContext(MainNavigatorContext);
 
   return (
-    <Box w="100%" h="$full" py={20}>
+    <Box w="100%" h="$full" p={20}>
       <Box mb={30}>
         {/* Profile */}
         <Button
