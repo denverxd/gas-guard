@@ -79,7 +79,7 @@ const SettingsScreen = ({navigation}) => {
           {/* <ButtonIcon as={ChevronRightIcon} /> */}
         </Button>
       </Box>
-      <Box w="$full" position="absolute" bottom={10}>
+      <Box w="$full" position="absolute" bottom={10} right={5}>
         <VersionText />
       </Box>
     </Box>
