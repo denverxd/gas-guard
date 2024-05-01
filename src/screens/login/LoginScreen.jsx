@@ -68,6 +68,7 @@ const LoginScreen = ({navigation}) => {
       {/* Logo */}
       <Image
         source={appImages.mainLogo}
+        alt=""
         h={150}
         w={150}
         style={{alignSelf: 'center', marginTop: '30%'}}
@@ -140,7 +141,7 @@ const LoginScreen = ({navigation}) => {
         <Box>
           <HStack style={{justifyContent: 'space-between'}}>
             {/* Remember checkbox */}
-            <Checkbox size="sm">
+            <Checkbox aria-label="Remember me" size="sm">
               <CheckboxIndicator mr="$2">
                 <CheckboxIcon as={CheckIcon} />
               </CheckboxIndicator>
