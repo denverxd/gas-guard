@@ -4,6 +4,9 @@ import HomeScreen from '../screens/home/HomeScreen';
 import LoginScreen from '../screens/login/LoginScreen';
 import SignUpScreen from '../screens/signup/SignUpScreen';
 import HomeTabsNavigator from './HomeTabsNavigator';
+import UpdateProfileScreen from '../screens/settings/profile/UpdateProfileScreen';
+import UpdatePinScreen from '../screens/settings/pin/UpdatePinScreen';
+import PreferencesScreen from '../screens/settings/preferences/PreferencesScreen';
 
 const Stack = createNativeStackNavigator();
 export const MainNavigatorContext = React.createContext();
@@ -47,6 +50,19 @@ const MainNavigator = () => {
               component={HomeTabsNavigator}
               options={{headerShown: false}}
             />
+
+            {/* Settings Stack */}
+            <Stack.Screen
+              name="Profile"
+              options={{title: 'Update Profile'}}
+              component={UpdateProfileScreen}
+            />
+            <Stack.Screen
+              name="PIN"
+              options={{title: 'Update PIN'}}
+              component={UpdatePinScreen}
+            />
+            <Stack.Screen name="Preferences" component={PreferencesScreen} />
           </>
         )}
       </Stack.Navigator>

@@ -30,6 +30,7 @@ import {
   LockIcon,
   SmartphoneIcon,
 } from 'lucide-react-native';
+import VersionText from '../../components/VersionText';
 
 const LoginScreen = ({navigation}) => {
   const {setIsSignedIn} = useContext(MainNavigatorContext);
@@ -65,6 +66,7 @@ const LoginScreen = ({navigation}) => {
 
   return (
     <Box w="100%" h="100%">
+      <VersionText />
       {/* Logo */}
       <Image
         source={appImages.mainLogo}
