@@ -12,24 +12,26 @@ import Speedometer, {
 import {Box, Text} from '@gluestack-ui/themed';
 import {primaryColor} from '../../constant/colors';
 import {Text as SvgText} from 'react-native-svg';
+import GGAbly from '../../libraries/gasGuardAbly.js';
 
 const HomeScreen = () => {
   const [gasValue, setGasValue] = useState(0);
 
   useEffect(() => {
-    let val = 0;
-    const testGauge = setInterval(() => {
-      val = (val + 107.3).toFixed(2);
-      val = parseFloat(val);
-      if (val < 1000) {
-        setGasValue(val);
-      } else {
-        val = 0;
-        setGasValue(0);
-      }
-    }, 1000);
+    testAblyChannel();
+    // let val = 0;
+    // const testGauge = setInterval(() => {
+    //   val = (val + 107.3).toFixed(2);
+    //   val = parseFloat(val);
+    //   if (val < 1000) {
+    //     setGasValue(val);
+    //   } else {
+    //     val = 0;
+    //     setGasValue(0);
+    //   }
+    // }, 1000);
 
-    return () => clearInterval(testGauge);
+    // return () => clearInterval(testGauge);
   }, []);
 
   const handleProgressColor = value => {
@@ -45,6 +47,28 @@ const HomeScreen = () => {
     }
 
     return {color, status};
+  };
+
+  const testAblyChannel = () => {
+    let valTimer = null;
+    GGAbly.channel.subscribe(message => {
+      let val = 0;
+      if (valTimer != null) {
+        clearTimeout(valTimer);
+        valTimer = null;
+      }
+      if (message?.data) {
+        const data = JSON.parse(message.data);
+        val = parseFloat(data.val);
+        console.log('Val: ', val);
+        setGasValue(val);
+
+        valTimer = setTimeout(() => {
+          val = 0;
+          setGasValue(val);
+        }, 60000);
+      }
+    });
   };
 
   const meterWidth = 350;

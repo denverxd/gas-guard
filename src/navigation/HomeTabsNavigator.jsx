@@ -4,12 +4,14 @@ import NotificationScreen from '../screens/notifications/NotificationScreen';
 import SettingsScreen from '../screens/settings/SettingsScreen';
 import {
   BellIcon,
+  ContactRoundIcon,
   HistoryIcon,
   HomeIcon,
   SettingsIcon,
 } from 'lucide-react-native';
 import {Button, ButtonIcon} from '@gluestack-ui/themed';
 import {primaryColor} from '../constant/colors';
+import ContactsScreen from '../screens/contacts/ContactsScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -35,6 +37,16 @@ const HomeTabsNavigator = () => {
         component={NotificationScreen}
         options={{
           tabBarIcon: ({color, size}) => <BellIcon color={color} size={size} />,
+          headerTitleAlign: 'center',
+        }}
+      />
+      <Tab.Screen
+        name="Contacts"
+        component={ContactsScreen}
+        options={{
+          tabBarIcon: ({color, size}) => (
+            <ContactRoundIcon color={color} size={size} />
+          ),
           headerTitleAlign: 'center',
         }}
       />
