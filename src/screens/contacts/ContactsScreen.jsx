@@ -77,16 +77,16 @@ const ContactItem = ({name, mobile}) => (
 );
 
 const ContactsScreen = () => {
-  const sampleListLength = 10;
   return (
     <Box h="100%" paddingTop={20}>
-      <Box paddingHorizontal={20} backgroundColor="white">
+      <Box paddingHorizontal={20}>
         <Input
           variant="outline"
           size="md"
           isDisabled={false}
           isInvalid={false}
-          isReadOnly={false}>
+          isReadOnly={false}
+          backgroundColor="white">
           <InputSlot pl="$3" bg="$white">
             <InputIcon as={SearchIcon} />
           </InputSlot>
