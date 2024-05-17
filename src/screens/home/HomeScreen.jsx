@@ -14,7 +14,7 @@ import {primaryColor} from '../../constant/colors';
 import {Text as SvgText} from 'react-native-svg';
 import GGAbly from '../../libraries/gasGuardAbly.js';
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
   const [gasValue, setGasValue] = useState(0);
 
   useEffect(() => {

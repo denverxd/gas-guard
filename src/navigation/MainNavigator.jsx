@@ -7,6 +7,7 @@ import HomeTabsNavigator from './HomeTabsNavigator';
 import UpdateProfileScreen from '../screens/settings/profile/UpdateProfileScreen';
 import UpdatePinScreen from '../screens/settings/pin/UpdatePinScreen';
 import PreferencesScreen from '../screens/settings/preferences/PreferencesScreen';
+import HistoryScreen from '../screens/history/HistoryScreen';
 
 const Stack = createNativeStackNavigator();
 export const MainNavigatorContext = React.createContext();
@@ -49,6 +50,13 @@ const MainNavigator = () => {
               name="HomeTabs"
               component={HomeTabsNavigator}
               options={{headerShown: false}}
+            />
+
+            {/* History */}
+            <Stack.Screen
+              name="History"
+              options={{title: 'History'}}
+              component={HistoryScreen}
             />
 
             {/* Settings Stack */}

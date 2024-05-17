@@ -15,7 +15,7 @@ import ContactsScreen from '../screens/contacts/ContactsScreen';
 
 const Tab = createBottomTabNavigator();
 
-const HomeTabsNavigator = () => {
+const HomeTabsNavigator = ({navigation}) => {
   return (
     <Tab.Navigator>
       <Tab.Screen
@@ -26,7 +26,10 @@ const HomeTabsNavigator = () => {
           headerTitle: 'Gas Sensor Meter',
           headerTitleAlign: 'center',
           headerRight: () => (
-            <Button variant="outline" borderWidth={0}>
+            <Button
+              variant="outline"
+              borderWidth={0}
+              onPress={() => navigation.navigate('History')}>
               <ButtonIcon size="xl" color={primaryColor} as={HistoryIcon} />
             </Button>
           ),
