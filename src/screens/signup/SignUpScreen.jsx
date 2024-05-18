@@ -20,10 +20,30 @@ import {
   SmartphoneIcon,
   UserIcon,
 } from 'lucide-react-native';
+import {usePostData} from '../../zustand/store';
 
 const SignUpScreen = () => {
   const [showPin, setShowPin] = useState(false);
   const [showConfirmPin, setShowConfirmPin] = useState(false);
+  const [fields, setFields] = useState({
+    fullname: '',
+    email: '',
+    mobile: '',
+    pin: '',
+    pin2: '',
+  });
+  const postData = usePostData();
+
+  const testSignUp = () => {
+    const params = {
+      fullname: 'test001',
+      email: 'test001@email.com',
+      mobile: '9123456789',
+      pin: '123456',
+    };
+
+    postData.execute('/users/', params);
+  };
 
   const handleShowPin = () => {
     setShowPin(showPin => {
@@ -36,8 +56,20 @@ const SignUpScreen = () => {
       return !showConfirmPin;
     });
   };
+
+  const onChangeField = (field, value) => {
+    let temp = {...fields};
+    temp[field] = value;
+    console.log({temp});
+    setFields(temp);
+  };
   return (
     <Box w="100%" h="100%" style={{paddingTop: 20}}>
+      {console.log({
+        loading: postData.loading,
+        data: postData.data,
+        error: postData.error,
+      })}
       {/* Profile Section */}
       <Box w={300} style={{alignSelf: 'center'}}>
         <Text size="lg" bold style={{marginBottom: 10}}>
@@ -51,7 +83,11 @@ const SignUpScreen = () => {
                 <InputSlot px="$3" bg="$white">
                   <InputIcon as={UserIcon} />
                 </InputSlot>
-                <InputField placeholder="Full Name" bg="$white" />
+                <InputField
+                  placeholder="Full Name"
+                  bg="$white"
+                  onChangeText={text => onChangeField('fullname', text)}
+                />
               </Input>
             </HStack>
           </Center>
@@ -69,6 +105,7 @@ const SignUpScreen = () => {
                   placeholder="Mobile"
                   bg="$white"
                   keyboardType="number-pad"
+                  onChangeText={text => onChangeField('mobile', text)}
                 />
               </Input>
             </HStack>
@@ -87,6 +124,7 @@ const SignUpScreen = () => {
                   placeholder="Email"
                   bg="$white"
                   keyboardType="email-address"
+                  onChangeText={text => onChangeField('email', text)}
                 />
               </Input>
             </HStack>
@@ -112,6 +150,7 @@ const SignUpScreen = () => {
                   bg="$white"
                   keyboardType="number-pad"
                   type={showPin ? 'text' : 'password'}
+                  onChangeText={text => onChangeField('pin', text)}
                 />
                 <InputSlot px="$3" onPress={handleShowPin} bg="$white">
                   <InputIcon
@@ -137,6 +176,7 @@ const SignUpScreen = () => {
                   bg="$white"
                   keyboardType="number-pad"
                   type={showConfirmPin ? 'text' : 'password'}
+                  onChangeText={text => onChangeField('pin2', text)}
                 />
                 <InputSlot px="$3" onPress={handleShowConfirmPin} bg="$white">
                   <InputIcon
@@ -159,7 +199,10 @@ const SignUpScreen = () => {
           position: 'absolute',
           bottom: 25,
         }}>
-        <Button action="primary" style={{borderRadius: 999}}>
+        <Button
+          action="primary"
+          style={{borderRadius: 999}}
+          onPress={() => testSignUp()}>
           <ButtonText>Sign Up</ButtonText>
         </Button>
       </Box>

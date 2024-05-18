@@ -61,7 +61,9 @@ const HomeScreen = ({navigation}) => {
         const data = JSON.parse(message.data);
         val = parseFloat(data.val);
         console.log('Val: ', val);
-        setGasValue(val);
+        let temp = (parseFloat(val) / 100) * 10000;
+        temp = parseFloat(temp.toFixed(2));
+        setGasValue(temp);
 
         valTimer = setTimeout(() => {
           val = 0;
@@ -78,7 +80,7 @@ const HomeScreen = ({navigation}) => {
       <Box alignItems="center" zIndex={-1}>
         <Speedometer
           value={gasValue}
-          max={1000}
+          max={10000}
           angle={160}
           fontFamily="squada-one"
           accentColor={primaryColor}
@@ -87,13 +89,13 @@ const HomeScreen = ({navigation}) => {
           <Background angle={180} />
           <Arc strokeWidth={10} arcWidth={10} />
           <Needle />
-          <DangerPath angle={56} offset={10} />
+          {/* <DangerPath angle={56} offset={10} /> */}
           <Progress
             color={handleProgressColor(gasValue).color}
             strokeWidth={10}
             arcWidth={10}
           />
-          <Marks step={100} />
+          <Marks step={1000} />
           <Indicator>
             {(value, textProps) => (
               <SvgText
