@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {MainNavigatorContext} from '../../navigation/MainNavigator';
 import {
   Box,
@@ -31,6 +31,8 @@ import {
   SmartphoneIcon,
 } from 'lucide-react-native';
 import VersionText from '../../components/VersionText';
+import messaging from '@react-native-firebase/messaging';
+import {getUniqueId} from 'react-native-device-info';
 
 const LoginScreen = ({navigation}) => {
   const {setIsSignedIn} = useContext(MainNavigatorContext);
@@ -41,6 +43,27 @@ const LoginScreen = ({navigation}) => {
     mobile: '09123456789',
     pin: '123456',
   });
+  const [token, setToken] = useState('');
+  const [deviceId, setDeviceId] = useState('');
+
+  useEffect(() => {
+    getFcmToken();
+    handleDeviceId();
+  }, []);
+
+  const getFcmToken = async () => {
+    const fcmToken = await messaging().getToken();
+
+    console.log(fcmToken);
+    setToken(fcmToken);
+  };
+
+  const handleDeviceId = async () => {
+    const id = await getUniqueId();
+
+    console.log(id);
+    setDeviceId(id);
+  };
 
   const handleShowPin = () => {
     setShowPin(showPin => {
@@ -84,6 +107,42 @@ const LoginScreen = ({navigation}) => {
       {/* Form */}
       <Box w={300} style={{borderWidth: 0, alignSelf: 'center'}}>
         <FormControl isInvalid={isLoginInvalid}>
+          {/* <FormControl>
+            <Center>
+              <HStack style={{alignItems: 'center'}}>
+                <Input style={{flex: 1}}>
+                  <InputSlot px="$3" bg="$white">
+                    <InputIcon as={SmartphoneIcon} />
+                  </InputSlot>
+                  <InputField
+                    placeholder="Token"
+                    bg="$white"
+                    // keyboardType="number-pad"
+                    value={token}
+                    // onChangeText={text => onChangeField('mobile', text)}
+                  />
+                </Input>
+              </HStack>
+            </Center>
+          </FormControl>
+          <FormControl>
+            <Center>
+              <HStack style={{alignItems: 'center'}}>
+                <Input style={{flex: 1}}>
+                  <InputSlot px="$3" bg="$white">
+                    <InputIcon as={SmartphoneIcon} />
+                  </InputSlot>
+                  <InputField
+                    placeholder="Token"
+                    bg="$white"
+                    // keyboardType="number-pad"
+                    value={deviceId}
+                    // onChangeText={text => onChangeField('mobile', text)}
+                  />
+                </Input>
+              </HStack>
+            </Center>
+          </FormControl> */}
           {/* Mobile Input */}
           <FormControl>
             <Center>

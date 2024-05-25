@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "735561467474",
+    "project_id": "toniotest-20945",
+    "storage_bucket": "toniotest-20945.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:735561467474:android:c861a5844cadc6bd3d418b",
+        "android_client_info": {
+          "package_name": "com.gasguard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "735561467474-5489l2uc8ko7im5tf5vm6sdcnpv5h3gg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCw6oBFdWAFALi8yN4mklxBqGIo1YpYnfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "735561467474-5489l2uc8ko7im5tf5vm6sdcnpv5h3gg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:735561467474:android:2d13c23aeffa60483d418b",
+        "android_client_info": {
+          "package_name": "com.jnt.gasguard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "735561467474-5489l2uc8ko7im5tf5vm6sdcnpv5h3gg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCw6oBFdWAFALi8yN4mklxBqGIo1YpYnfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "735561467474-5489l2uc8ko7im5tf5vm6sdcnpv5h3gg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

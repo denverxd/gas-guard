@@ -8,11 +8,13 @@ import UpdateProfileScreen from '../screens/settings/profile/UpdateProfileScreen
 import UpdatePinScreen from '../screens/settings/pin/UpdatePinScreen';
 import PreferencesScreen from '../screens/settings/preferences/PreferencesScreen';
 import HistoryScreen from '../screens/history/HistoryScreen';
+import {useAblyChannel} from '../libraries/pushNotification/ablyHooks';
 
 const Stack = createNativeStackNavigator();
 export const MainNavigatorContext = React.createContext();
 
 const MainNavigator = () => {
+  useAblyChannel();
   const [isSignedIn, setIsSignedIn] = React.useState(false);
 
   const mainNavigatorContextValue = useMemo(
