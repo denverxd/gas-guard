@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Box,
   Text,
@@ -11,8 +11,10 @@ import {
   InputField,
   InputSlot,
   InputIcon,
+  useToast,
 } from '@gluestack-ui/themed';
 import {
+  AlertCircleIcon,
   EyeIcon,
   EyeOffIcon,
   LockIcon,
@@ -21,10 +23,30 @@ import {
   UserIcon,
 } from 'lucide-react-native';
 import {usePostData} from '../../zustand/store';
+import {FormControlError} from '@gluestack-ui/themed';
+import {FormControlErrorIcon} from '@gluestack-ui/themed';
+import {FormControlErrorText} from '@gluestack-ui/themed';
+import {Alert} from 'react-native';
+import {ButtonSpinner} from '@gluestack-ui/themed';
 
-const SignUpScreen = () => {
+const testParams = {
+  fullname: 'test001',
+  email: 'test001@email.com',
+  mobile: '1123456789',
+  pin: '123456',
+  pin2: '123456',
+};
+
+const SignUpScreen = ({navigation}) => {
+  const [isMount, setIsMount] = useState(false);
   const [showPin, setShowPin] = useState(false);
   const [showConfirmPin, setShowConfirmPin] = useState(false);
+
+  const [isMobileInvalid, setIsMobileInvalid] = useState(false);
+  const [isPinError, setIsPinError] = useState(false);
+  const [isPinConfirmError, setIsPinConfirmError] = useState(false);
+  const [isSignUpError, setIsSignUpError] = useState(false);
+
   const [fields, setFields] = useState({
     fullname: '',
     email: '',
@@ -34,14 +56,70 @@ const SignUpScreen = () => {
   });
   const postData = usePostData();
 
-  const testSignUp = () => {
-    const params = {
-      fullname: 'test001',
-      email: 'test001@email.com',
-      mobile: '9123456789',
-      pin: '123456',
-    };
+  useEffect(() => {}, []);
 
+  useEffect(() => {
+    if (isMount) {
+      console.log({postData});
+      if (postData.success) {
+        Alert.alert(
+          'Success',
+          'Successfully created an account. You can now sign in.',
+        );
+        navigation.navigate('Login');
+      } else if (postData.error) {
+        if (postData.errorData == 'Network Error') {
+          Alert.alert(
+            'Network Error',
+            'Please check your internet connection or contact developer.',
+          );
+          return;
+        }
+
+        setIsSignUpError(true);
+      }
+    } else {
+      setIsMount(true);
+    }
+  }, [
+    postData.loading,
+    postData.success,
+    postData.data,
+    postData.error,
+    postData.errorData,
+  ]);
+
+  const onSignUpPress = () => {
+    let tempFields = {...fields};
+    // let tempFields = {...testParams};
+    console.log(tempFields);
+
+    for (let item of Object.values(tempFields)) {
+      if (item === '') {
+        Alert.alert('Error', 'Please fill out all fields');
+        return;
+      }
+    }
+
+    if (/^9\d{9}$/.test(tempFields.mobile) == false) {
+      setIsMobileInvalid(true);
+      console.log('invalid mobile');
+      return;
+    }
+
+    if (tempFields.pin.length !== 6) {
+      setIsPinError(true);
+      return;
+    }
+    if (tempFields.pin !== tempFields.pin2) {
+      console.log("PIN doesn't match");
+      setIsPinConfirmError(true);
+      return;
+    }
+
+    delete tempFields.pin2;
+    const params = {...tempFields};
+    console.log('Signup');
     postData.execute('/users/', params);
   };
 
@@ -59,17 +137,27 @@ const SignUpScreen = () => {
 
   const onChangeField = (field, value) => {
     let temp = {...fields};
+    if (field == 'fullname' || field == 'mobile' || field == 'email') {
+      setIsSignUpError(false);
+    }
+
+    if (field == 'pin' || field == 'pin2') {
+      setIsPinConfirmError(false);
+    }
+
+    if (field == 'pin') {
+      setIsPinError(false);
+    }
+
+    if (field == 'mobile') {
+      setIsMobileInvalid(false);
+    }
+
     temp[field] = value;
-    console.log({temp});
     setFields(temp);
   };
   return (
     <Box w="100%" h="100%" style={{paddingTop: 20}}>
-      {console.log({
-        loading: postData.loading,
-        data: postData.data,
-        error: postData.error,
-      })}
       {/* Profile Section */}
       <Box w={300} style={{alignSelf: 'center'}}>
         <Text size="lg" bold style={{marginBottom: 10}}>
@@ -77,43 +165,52 @@ const SignUpScreen = () => {
         </Text>
         {/* Full Name Input */}
         <FormControl>
-          <Center>
-            <HStack style={{alignItems: 'center'}}>
-              <Input style={{flex: 1}}>
-                <InputSlot px="$3" bg="$white">
-                  <InputIcon as={UserIcon} />
-                </InputSlot>
-                <InputField
-                  placeholder="Full Name"
-                  bg="$white"
-                  onChangeText={text => onChangeField('fullname', text)}
-                />
-              </Input>
-            </HStack>
-          </Center>
+          <HStack style={{alignItems: 'center'}}>
+            <Input style={{flex: 1}}>
+              <InputSlot px="$3" bg="$white">
+                <InputIcon as={UserIcon} />
+              </InputSlot>
+              <InputField
+                placeholder="Full Name"
+                bg="$white"
+                onChangeText={text => onChangeField('fullname', text)}
+              />
+            </Input>
+          </HStack>
         </FormControl>
         <Box h={10} />
         {/* Mobile Input */}
-        <FormControl>
+        <FormControl isInvalid={isMobileInvalid}>
           <Center>
             <HStack style={{alignItems: 'center'}}>
               <Input style={{flex: 1}}>
                 <InputSlot px="$3" bg="$white">
                   <InputIcon as={SmartphoneIcon} />
                 </InputSlot>
+                <InputSlot bg="$white" pb="$1">
+                  <Text>+63</Text>
+                </InputSlot>
                 <InputField
                   placeholder="Mobile"
                   bg="$white"
+                  pl="$1"
                   keyboardType="number-pad"
+                  maxLength={10}
                   onChangeText={text => onChangeField('mobile', text)}
                 />
               </Input>
             </HStack>
           </Center>
+          <FormControlError>
+            <FormControlErrorIcon as={AlertCircleIcon} />
+            <FormControlErrorText>
+              Please provide a valid 10 digit mobile number
+            </FormControlErrorText>
+          </FormControlError>
         </FormControl>
         <Box h={10} />
         {/* Email Input */}
-        <FormControl>
+        <FormControl isInvalid={isSignUpError}>
           <Center>
             <HStack style={{alignItems: 'center'}}>
               <Input style={{flex: 1}}>
@@ -129,6 +226,13 @@ const SignUpScreen = () => {
               </Input>
             </HStack>
           </Center>
+          <FormControlError>
+            <FormControlErrorIcon as={AlertCircleIcon} />
+            <FormControlErrorText>
+              One of the profile details may already be taken. Please update
+              your profile
+            </FormControlErrorText>
+          </FormControlError>
         </FormControl>
       </Box>
       <Box h={30} />
@@ -138,7 +242,7 @@ const SignUpScreen = () => {
           PIN
         </Text>
         {/* PIN Input */}
-        <FormControl>
+        <FormControl isInvalid={isPinError}>
           <Center>
             <HStack style={{alignItems: 'center'}}>
               <Input style={{flex: 1}}>
@@ -149,6 +253,7 @@ const SignUpScreen = () => {
                   placeholder="PIN (6 digit)"
                   bg="$white"
                   keyboardType="number-pad"
+                  maxLength={6}
                   type={showPin ? 'text' : 'password'}
                   onChangeText={text => onChangeField('pin', text)}
                 />
@@ -161,10 +266,14 @@ const SignUpScreen = () => {
               </Input>
             </HStack>
           </Center>
+          <FormControlError>
+            <FormControlErrorIcon as={AlertCircleIcon} />
+            <FormControlErrorText>PIN must be 6 digits</FormControlErrorText>
+          </FormControlError>
         </FormControl>
         <Box h={10} />
         {/* Confirm PIN Input */}
-        <FormControl>
+        <FormControl isInvalid={isPinConfirmError}>
           <Center>
             <HStack style={{alignItems: 'center'}}>
               <Input style={{flex: 1}}>
@@ -175,6 +284,7 @@ const SignUpScreen = () => {
                   placeholder="Confirm PIN (6 digit)"
                   bg="$white"
                   keyboardType="number-pad"
+                  maxLength={6}
                   type={showConfirmPin ? 'text' : 'password'}
                   onChangeText={text => onChangeField('pin2', text)}
                 />
@@ -187,6 +297,10 @@ const SignUpScreen = () => {
               </Input>
             </HStack>
           </Center>
+          <FormControlError>
+            <FormControlErrorIcon as={AlertCircleIcon} />
+            <FormControlErrorText>PIN doesn't match</FormControlErrorText>
+          </FormControlError>
         </FormControl>
       </Box>
 
@@ -202,8 +316,13 @@ const SignUpScreen = () => {
         <Button
           action="primary"
           style={{borderRadius: 999}}
-          onPress={() => testSignUp()}>
-          <ButtonText>Sign Up</ButtonText>
+          disabled={postData.loading}
+          onPress={() => onSignUpPress()}>
+          {postData.loading ? (
+            <ButtonSpinner />
+          ) : (
+            <ButtonText>Sign Up</ButtonText>
+          )}
         </Button>
       </Box>
     </Box>

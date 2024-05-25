@@ -1,5 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {MainNavigatorContext} from '../../navigation/MainNavigator';
+import React, {useEffect, useState} from 'react';
 import Speedometer, {
   Background,
   Arc,
@@ -14,24 +13,11 @@ import {primaryColor} from '../../constant/colors';
 import {Text as SvgText} from 'react-native-svg';
 import GGAbly from '../../libraries/gasGuardAbly.js';
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({}) => {
   const [gasValue, setGasValue] = useState(0);
 
   useEffect(() => {
-    testAblyChannel();
-    // let val = 0;
-    // const testGauge = setInterval(() => {
-    //   val = (val + 107.3).toFixed(2);
-    //   val = parseFloat(val);
-    //   if (val < 1000) {
-    //     setGasValue(val);
-    //   } else {
-    //     val = 0;
-    //     setGasValue(0);
-    //   }
-    // }, 1000);
-
-    // return () => clearInterval(testGauge);
+    handleAblySubscribe();
   }, []);
 
   const handleProgressColor = value => {
@@ -49,7 +35,7 @@ const HomeScreen = ({navigation}) => {
     return {color, status};
   };
 
-  const testAblyChannel = () => {
+  const handleAblySubscribe = () => {
     let valTimer = null;
     GGAbly.channel.subscribe(message => {
       let val = 0;
