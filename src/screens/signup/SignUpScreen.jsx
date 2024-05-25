@@ -56,11 +56,9 @@ const SignUpScreen = ({navigation}) => {
   });
   const postData = usePostData();
 
-  useEffect(() => {}, []);
-
   useEffect(() => {
     if (isMount) {
-      console.log({postData});
+      console.log({signUpPostData: postData});
       if (postData.success) {
         Alert.alert(
           'Success',
@@ -68,13 +66,7 @@ const SignUpScreen = ({navigation}) => {
         );
         navigation.navigate('Login');
       } else if (postData.error) {
-        if (postData.errorData == 'Network Error') {
-          Alert.alert(
-            'Network Error',
-            'Please check your internet connection or contact developer.',
-          );
-          return;
-        }
+        if (handleCommonErrorRequest(postData)) return;
 
         setIsSignUpError(true);
       }
@@ -92,7 +84,6 @@ const SignUpScreen = ({navigation}) => {
   const onSignUpPress = () => {
     let tempFields = {...fields};
     // let tempFields = {...testParams};
-    console.log(tempFields);
 
     for (let item of Object.values(tempFields)) {
       if (item === '') {
@@ -103,7 +94,6 @@ const SignUpScreen = ({navigation}) => {
 
     if (/^9\d{9}$/.test(tempFields.mobile) == false) {
       setIsMobileInvalid(true);
-      console.log('invalid mobile');
       return;
     }
 
@@ -112,14 +102,12 @@ const SignUpScreen = ({navigation}) => {
       return;
     }
     if (tempFields.pin !== tempFields.pin2) {
-      console.log("PIN doesn't match");
       setIsPinConfirmError(true);
       return;
     }
 
     delete tempFields.pin2;
     const params = {...tempFields};
-    console.log('Signup');
     postData.execute('/users/', params);
   };
 
@@ -187,7 +175,7 @@ const SignUpScreen = ({navigation}) => {
                 <InputSlot px="$3" bg="$white">
                   <InputIcon as={SmartphoneIcon} />
                 </InputSlot>
-                <InputSlot bg="$white" pb="$1">
+                <InputSlot bg="$white" pb="$0.5">
                   <Text>+63</Text>
                 </InputSlot>
                 <InputField

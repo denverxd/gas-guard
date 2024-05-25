@@ -21,6 +21,7 @@ import {
   FormControlErrorText,
   FormControlErrorIcon,
   FormControlError,
+  ButtonSpinner,
 } from '@gluestack-ui/themed';
 import {appImages} from '../../images';
 import {
@@ -33,10 +34,14 @@ import {
 import VersionText from '../../components/VersionText';
 import messaging from '@react-native-firebase/messaging';
 import {getUniqueId} from 'react-native-device-info';
+import {usePostData} from '../../zustand/store';
+import {Alert} from 'react-native';
+import {handleCommonErrorRequest} from '../../libraries/helpers';
 
 const LoginScreen = ({navigation}) => {
   const {setIsSignedIn} = useContext(MainNavigatorContext);
 
+  const [isMount, setIsMount] = useState(false);
   const [showPin, setShowPin] = useState(false);
   const [isLoginInvalid, setIsLoginInvalid] = useState(false);
   const [loginFields, setLoginFields] = useState({
@@ -46,10 +51,34 @@ const LoginScreen = ({navigation}) => {
   const [token, setToken] = useState('');
   const [deviceId, setDeviceId] = useState('');
 
+  const loginPostData = usePostData();
+
   useEffect(() => {
     getFcmToken();
     handleDeviceId();
   }, []);
+
+  useEffect(() => {
+    if (isMount) {
+      console.log({loginPostData});
+      if (loginPostData.success) {
+        setIsSignedIn(true);
+        setIsLoginInvalid(false);
+      } else if (loginPostData.error) {
+        if (handleCommonErrorRequest(loginPostData)) return;
+
+        setIsLoginInvalid(true);
+      }
+    } else {
+      setIsMount(true);
+    }
+  }, [
+    loginPostData.loading,
+    loginPostData.success,
+    loginPostData.data,
+    loginPostData.error,
+    loginPostData.errorData,
+  ]);
 
   const getFcmToken = async () => {
     const fcmToken = await messaging().getToken();
@@ -73,18 +102,27 @@ const LoginScreen = ({navigation}) => {
 
   const onChangeField = (field, value) => {
     let tempFields = {...loginFields};
+
+    if (field == 'mobile' || field == 'pin') {
+      setIsLoginInvalid(false);
+    }
+
     tempFields[field] = value;
     setLoginFields(tempFields);
   };
 
   const onSignInPress = () => {
-    if (loginFields.mobile == '09123456789' && loginFields.pin == '123456') {
-      setIsSignedIn(true);
-      setIsLoginInvalid(false);
-    } else {
-      console.log('Invalid Credentials');
-      setIsLoginInvalid(true);
+    let tempFields = {...loginFields};
+
+    for (let item of Object.values(tempFields)) {
+      if (item === '') {
+        Alert.alert('Error', 'Please fill out all fields');
+        return;
+      }
     }
+
+    const params = {...tempFields};
+    loginPostData.execute('/login', params);
   };
 
   return (
@@ -151,9 +189,13 @@ const LoginScreen = ({navigation}) => {
                   <InputSlot px="$3" bg="$white">
                     <InputIcon as={SmartphoneIcon} />
                   </InputSlot>
+                  <InputSlot bg="$white" pb="$0.5">
+                    <Text>+63</Text>
+                  </InputSlot>
                   <InputField
                     placeholder="Mobile"
                     bg="$white"
+                    pl="$1"
                     keyboardType="number-pad"
                     value={loginFields.mobile}
                     onChangeText={text => onChangeField('mobile', text)}
@@ -198,8 +240,15 @@ const LoginScreen = ({navigation}) => {
         </FormControl>
         <Box h={10} />
         {/* Sign In Button */}
-        <Button action="primary" onPress={onSignInPress}>
-          <ButtonText>Sign In</ButtonText>
+        <Button
+          action="primary"
+          onPress={onSignInPress}
+          disabled={loginPostData.loading}>
+          {loginPostData.loading ? (
+            <ButtonSpinner />
+          ) : (
+            <ButtonText>Sign In</ButtonText>
+          )}
         </Button>
         <Box>
           <HStack style={{justifyContent: 'space-between'}}>
