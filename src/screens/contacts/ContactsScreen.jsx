@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Box,
   Fab,
@@ -14,6 +14,9 @@ import {PlusIcon, SearchIcon, UserIcon} from 'lucide-react-native';
 import {HStack} from '@gluestack-ui/themed';
 import {primaryColor} from '../../constant/colors';
 import {FabIcon} from '@gluestack-ui/themed';
+import {useGetData} from '../../zustand/store';
+import {useFocusEffect} from '@react-navigation/native';
+import {handleCommonErrorRequest} from '../../libraries/helpers';
 
 const testContactList = [
   {
@@ -77,6 +80,52 @@ const ContactItem = ({name, mobile}) => (
 );
 
 const ContactsScreen = () => {
+  const [isMount, setIsMount] = useState(false);
+  const [listData, setListData] = useState([]);
+  const [searchText, setSearchText] = useState('');
+  const contactsGetData = useGetData();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getContacts();
+    }, []),
+  );
+
+  useEffect(() => {
+    if (isMount) {
+      if (contactsGetData.success) {
+        console.log('Contacts successfully loaded', {
+          contactsGetData: contactsGetData.data,
+        });
+        setListData(contactsGetData.data);
+      } else if (contactsGetData.error) {
+        if (handleCommonErrorRequest(contactsGetData)) return;
+
+        Alert.alert('Error', 'Something went wrong while loading contacts');
+      }
+    } else {
+      setIsMount(true);
+    }
+  }, [
+    contactsGetData.loading,
+    contactsGetData.success,
+    contactsGetData.data,
+    contactsGetData.error,
+    contactsGetData.errorData,
+  ]);
+
+  useEffect(() => {
+    if (contactsGetData.data?.length > 0) {
+      const filteredList = contactsGetData.data.filter(
+        a => a.fullname.includes(searchText) || a.mobile.includes(searchText),
+      );
+      setListData(filteredList);
+    }
+  }, [searchText]);
+
+  const getContacts = () => {
+    contactsGetData.execute('/contacts');
+  };
   return (
     <Box h="100%" paddingTop={20}>
       <Box paddingHorizontal={20}>
@@ -90,17 +139,21 @@ const ContactsScreen = () => {
           <InputSlot pl="$3" bg="$white">
             <InputIcon as={SearchIcon} />
           </InputSlot>
-          <InputField placeholder="Search name" />
+          <InputField
+            placeholder="Search name"
+            onChangeText={text => setSearchText(text)}
+          />
         </Input>
       </Box>
 
       <ScrollView
         px={20}
         contentContainerStyle={{paddingTop: 10, paddingBottom: 20}}>
-        {testContactList.map(({name, mobile}) => (
-          <ContactItem key={mobile} name={name} mobile={mobile} />
-        ))}
-        {testContactList.length >= 10 && (
+        {listData?.length > 0 &&
+          listData.map(({fullname, mobile}) => (
+            <ContactItem key={mobile} name={fullname} mobile={mobile} />
+          ))}
+        {listData?.length >= 10 && (
           <Box mt={5}>
             <HStack justifyContent="center" alignItems="center">
               <Box h={0.75} w={50} backgroundColor="$textLight300" />

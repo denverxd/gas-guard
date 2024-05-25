@@ -57,7 +57,7 @@ const LoginScreen = ({navigation}) => {
   const [isLoginInvalid, setIsLoginInvalid] = useState(false);
   const [loginFields, setLoginFields] = useState({
     mobile: '9123456789',
-    pin: '123456',
+    pin: '222979',
   });
   const [token, setToken] = useState('');
   const [deviceId, setDeviceId] = useState('');

@@ -11,9 +11,9 @@ import {useFocusEffect} from '@react-navigation/native';
 
 const NotificationItem = ({date, message}) => {
   let color = primaryColor;
-  if (message?.includes('WARNING')) {
+  if (message?.includes('Warning')) {
     color = 'orange';
-  } else if (message?.includes('DANGER')) {
+  } else if (message?.includes('Danger')) {
     color = 'red';
   }
   return (
