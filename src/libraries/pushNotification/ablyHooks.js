@@ -5,11 +5,11 @@ import GGAbly from '../gasGuardAbly';
 import {newNotification} from './notificationActions';
 
 //set CHANNEL_SCOPE  channel
-const CHANNEL_SCOPE = 'test-notif';
+const CHANNEL_SCOPE = '';
 
 const ably = GGAbly.client;
 
-export const useAblyChannel = (channel = 'test-notif', dependencies) => {
+export const useAblyChannel = (channel = '', dependencies) => {
   const dispatch = useDispatch();
 
   const [onMessage, setOnMessage] = useState('Please wait..');
@@ -24,7 +24,9 @@ export const useAblyChannel = (channel = 'test-notif', dependencies) => {
 
     const useChannel = ably.channels.get(`${CHANNEL_SCOPE}`);
     useChannel.subscribe(channel, message => {
-      console.log({message});
+      console.log({message, ablyHook: true});
+      console.log({MESSAGE_DATA_LEN: message.data.length});
+
       if (message.data.length > 0) {
         dispatch(newNotification(message.data));
         setOnMessage('Loading Data...');

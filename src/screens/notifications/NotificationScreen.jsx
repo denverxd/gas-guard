@@ -49,7 +49,6 @@ const NotificationScreen = () => {
 
   useEffect(() => {
     if (isMount) {
-      console.log({notifGetData});
       if (notifGetData.success) {
         console.log('Notification successfully loaded');
       } else if (notifGetData.error) {

@@ -37,7 +37,8 @@ const HomeScreen = ({}) => {
 
   const handleAblySubscribe = () => {
     let valTimer = null;
-    GGAbly.channel.subscribe(message => {
+    const meterChannel = GGAbly.GG_CHANNELS.meter;
+    GGAbly.getChannelSub(meterChannel).subscribe(message => {
       let val = 0;
       if (valTimer != null) {
         clearTimeout(valTimer);

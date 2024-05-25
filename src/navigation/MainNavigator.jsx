@@ -14,7 +14,7 @@ const Stack = createNativeStackNavigator();
 export const MainNavigatorContext = React.createContext();
 
 const MainNavigator = () => {
-  useAblyChannel();
+  // useAblyChannel();
   const [isSignedIn, setIsSignedIn] = React.useState(false);
 
   const mainNavigatorContextValue = useMemo(

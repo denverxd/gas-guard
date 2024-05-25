@@ -23,6 +23,7 @@ export function* sendPush() {
           message: notif_data.message,
         });
       } catch (err) {
+        console.log(err);
         yield put(pushNotificationFailure());
       }
     },

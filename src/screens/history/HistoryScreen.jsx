@@ -84,11 +84,8 @@ const HistoryScreen = () => {
 
   useEffect(() => {
     if (isMount) {
-      console.log({historyGetData});
       if (historyGetData.success) {
-        console.log('History successfully loaded', {
-          historyGetData: historyGetData.data,
-        });
+        console.log('History successfully loaded');
       } else if (historyGetData.error) {
         if (handleCommonErrorRequest(historyGetData)) return;
 
