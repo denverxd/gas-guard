@@ -2,7 +2,7 @@ import axios from 'axios';
 import {create} from 'zustand';
 
 // const BASE_URL = 'http://192.168.100.60:8000'; // local
-const BASE_URL = 'http://rport.thousandminds.com:28056'; // rport
+const BASE_URL = 'http://rport.thousandminds.com:27741'; // rport
 
 const initialState = {
   loading: false,
@@ -29,7 +29,7 @@ export const useGetData = create(set => ({
 export const usePostData = create(set => ({
   ...initialState,
 
-  execute: async (url, data) => {
+  execute: async (url, data = {}) => {
     set({...initialState, loading: true});
     try {
       const res = await axios.post(BASE_URL + url, data);

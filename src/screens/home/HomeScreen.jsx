@@ -46,7 +46,7 @@ const HomeScreen = ({}) => {
       if (message?.data) {
         const data = JSON.parse(message.data);
         val = parseFloat(data.val);
-        console.log('Val: ', val);
+        // console.log('Val: ', val);
         let temp = (parseFloat(val) / 100) * 10000;
         temp = parseFloat(temp.toFixed(2));
         setGasValue(temp);

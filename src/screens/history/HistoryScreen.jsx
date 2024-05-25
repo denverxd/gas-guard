@@ -1,16 +1,26 @@
-import {Box, HStack, ScrollView, Text} from '@gluestack-ui/themed';
+import {
+  Box,
+  HStack,
+  RefreshControl,
+  ScrollView,
+  Text,
+} from '@gluestack-ui/themed';
 import moment from 'moment';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {primaryColor} from '../../constant/colors';
+import {handleCommonErrorRequest} from '../../libraries/helpers';
+import {Alert} from 'react-native';
+import {useGetData} from '../../zustand/store';
+import {useFocusEffect} from '@react-navigation/native';
 
-const HistoryItem = ({gasValue, datetime}) => {
-  const handleStatusColor = value => {
+const HistoryItem = ({gasValue, datetime, statusType}) => {
+  const handleStatusColor = type => {
     let color = 'green';
     let status = 'Safe';
-    if (value > 650) {
+    if (type == 'DANGER') {
       color = 'red';
       status = 'Danger';
-    } else if (value > 350 && value <= 650) {
+    } else if (type == 'WARNING') {
       color = 'orange';
       status = 'Warning';
     } else {
@@ -25,7 +35,7 @@ const HistoryItem = ({gasValue, datetime}) => {
           h="100%"
           w={5}
           // marginTop={10}
-          backgroundColor={handleStatusColor(gasValue).color}
+          backgroundColor={handleStatusColor(statusType).color}
           // position="absolute"
           borderTopLeftRadius={20}
           borderBottomLeftRadius={20}
@@ -44,8 +54,8 @@ const HistoryItem = ({gasValue, datetime}) => {
             <Text
               fontSize={30}
               fontWeight="$medium"
-              color={handleStatusColor(gasValue).color}>
-              {gasValue} ppm
+              color={handleStatusColor(statusType).color}>
+              {gasValue}
             </Text>
             <Box>
               <Text textAlign="right" fontSize={20} color={primaryColor}>
@@ -63,6 +73,42 @@ const HistoryItem = ({gasValue, datetime}) => {
 };
 
 const HistoryScreen = () => {
+  const [isMount, setIsMount] = useState(false);
+  const historyGetData = useGetData();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getHistory();
+    }, []),
+  );
+
+  useEffect(() => {
+    if (isMount) {
+      console.log({historyGetData});
+      if (historyGetData.success) {
+        console.log('History successfully loaded', {
+          historyGetData: historyGetData.data,
+        });
+      } else if (historyGetData.error) {
+        if (handleCommonErrorRequest(historyGetData)) return;
+
+        Alert.alert('Error', 'Something went wrong while loading history');
+      }
+    } else {
+      setIsMount(true);
+    }
+  }, [
+    historyGetData.loading,
+    historyGetData.success,
+    historyGetData.data,
+    historyGetData.error,
+    historyGetData.errorData,
+  ]);
+
+  const getHistory = () => {
+    historyGetData.execute('/histories');
+  };
+
   return (
     <Box py={20} pr={5} w="100%" borderWidth={0} borderColor="red">
       <HStack justifyContent="space-evenly" mb={20}>
@@ -80,18 +126,34 @@ const HistoryScreen = () => {
         </Box>
       </HStack>
 
-      <ScrollView w="$full" px={20} contentContainerStyle={{paddingBottom: 30}}>
-        <HistoryItem gasValue={100} datetime="2024-05-18 06:00" />
-        <HistoryItem gasValue={200} datetime="2024-05-18 07:00" />
-        <HistoryItem gasValue={300} datetime="2024-05-18 08:00" />
-        <HistoryItem gasValue={400} datetime="2024-05-18 09:00" />
-        <HistoryItem gasValue={500} datetime="2024-05-18 10:00" />
-        <HistoryItem gasValue={600} datetime="2024-05-18 11:00" />
-        <HistoryItem gasValue={700} datetime="2024-05-18 12:00" />
-        <HistoryItem gasValue={750} datetime="2024-05-18 13:00" />
-        <HistoryItem gasValue={800} datetime="2024-05-18 14:00" />
-        <HistoryItem gasValue={850} datetime="2024-05-18 15:00" />
-        <HistoryItem gasValue={900} datetime="2024-05-18 16:00" />
+      <ScrollView
+        w="$full"
+        px={20}
+        contentContainerStyle={{paddingBottom: 30}}
+        refreshControl={
+          <RefreshControl
+            refreshing={historyGetData.loading}
+            onRefresh={getHistory}
+          />
+        }>
+        {historyGetData.data?.length > 0 ? (
+          historyGetData.data.map((item, index) => {
+            return (
+              <Box key={item.id}>
+                <HistoryItem
+                  gasValue={item.ppm}
+                  datetime={item.timestamp}
+                  statusType={item.status_type}
+                />
+                {index !== historyGetData.data.length - 1 && <Box h={15} />}
+              </Box>
+            );
+          })
+        ) : (
+          <Box justifyContent="center" alignItems="center">
+            <Text>No notifications yet</Text>
+          </Box>
+        )}
       </ScrollView>
     </Box>
   );
