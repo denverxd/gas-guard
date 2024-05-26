@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from '../screens/home/HomeScreen';
 import LoginScreen from '../screens/login/LoginScreen';
@@ -9,6 +9,7 @@ import UpdatePinScreen from '../screens/settings/pin/UpdatePinScreen';
 import PreferencesScreen from '../screens/settings/preferences/PreferencesScreen';
 import HistoryScreen from '../screens/history/HistoryScreen';
 import {useAblyChannel} from '../libraries/pushNotification/ablyHooks';
+import {getStoreData} from '../libraries/helpers';
 
 const Stack = createNativeStackNavigator();
 export const MainNavigatorContext = React.createContext();
@@ -24,6 +25,18 @@ const MainNavigator = () => {
     }),
     [isSignedIn],
   );
+
+  useEffect(() => {
+    checkUserLogin();
+  });
+
+  const checkUserLogin = async () => {
+    let userData = await getStoreData('user_data');
+    if (userData) {
+      setIsSignedIn(true);
+    }
+  };
+
   return (
     <MainNavigatorContext.Provider value={mainNavigatorContextValue}>
       <Stack.Navigator>

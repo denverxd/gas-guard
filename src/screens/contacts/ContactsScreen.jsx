@@ -117,7 +117,7 @@ const ContactsScreen = () => {
   useEffect(() => {
     if (contactsGetData.data?.length > 0) {
       const filteredList = contactsGetData.data.filter(
-        a => a.fullname.includes(searchText) || a.mobile.includes(searchText),
+        a => a.fullname?.includes(searchText) || a.mobile?.includes(searchText),
       );
       setListData(filteredList);
     }
@@ -150,8 +150,8 @@ const ContactsScreen = () => {
         px={20}
         contentContainerStyle={{paddingTop: 10, paddingBottom: 20}}>
         {listData?.length > 0 &&
-          listData.map(({fullname, mobile}) => (
-            <ContactItem key={mobile} name={fullname} mobile={mobile} />
+          listData.map(({fullname, mobile}, index) => (
+            <ContactItem key={`gg-${index}`} name={fullname} mobile={mobile} />
           ))}
         {listData?.length >= 10 && (
           <Box mt={5}>

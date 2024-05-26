@@ -12,13 +12,23 @@ import {Box, Text} from '@gluestack-ui/themed';
 import {primaryColor} from '../../constant/colors';
 import {Text as SvgText} from 'react-native-svg';
 import GGAbly from '../../libraries/gasGuardAbly.js';
+import {getStoreData} from '../../libraries/helpers.jsx';
 
 const HomeScreen = ({}) => {
   const [gasValue, setGasValue] = useState(0);
 
   useEffect(() => {
     handleAblySubscribe();
+    getUserFromStore();
   }, []);
+
+  const getUserFromStore = async () => {
+    let userData = await getStoreData('user_data');
+    userData = JSON.parse(userData);
+
+    console.log('Home: ', {userData});
+    return userData;
+  };
 
   const handleProgressColor = value => {
     let color = 'green';

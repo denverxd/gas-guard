@@ -36,20 +36,11 @@ import messaging from '@react-native-firebase/messaging';
 import {getUniqueId} from 'react-native-device-info';
 import {usePostData} from '../../zustand/store';
 import {Alert} from 'react-native';
-import {handleCommonErrorRequest} from '../../libraries/helpers';
+import {handleCommonErrorRequest, setStoreData} from '../../libraries/helpers';
 import Notification from '../../libraries/pushNotification/NotificationService';
 import PushNotification from 'react-native-push-notification';
 
 const LoginScreen = ({navigation}) => {
-  PushNotification.configure({
-    onRegister: function (token) {
-      console.log('TOKEN:', token);
-    },
-    onNotification(notification) {
-      console.log('Notification', notification);
-    },
-    popInitialNotification: true,
-  });
   const {setIsSignedIn} = useContext(MainNavigatorContext);
 
   const [isMount, setIsMount] = useState(false);
@@ -76,6 +67,9 @@ const LoginScreen = ({navigation}) => {
       if (loginPostData.success) {
         setIsSignedIn(true);
         setIsLoginInvalid(false);
+        const user_data = JSON.stringify(loginPostData.data);
+        console.log({user_data});
+        setStoreData('user_data', user_data);
       } else if (loginPostData.error) {
         if (handleCommonErrorRequest(loginPostData)) return;
 
@@ -295,14 +289,7 @@ const LoginScreen = ({navigation}) => {
           variant="outline"
           style={{borderRadius: 999}}
           bg="$white"
-          // onPress={() => navigation.navigate('SignUp')}
-          onPress={() =>
-            PushNotification.localNotification({
-              channelId: 'general',
-              title: 'Testinggggg',
-              message: 'Yes pi',
-            })
-          }>
+          onPress={() => navigation.navigate('SignUp')}>
           <ButtonText>Sign Up</ButtonText>
         </Button>
       </Box>

@@ -86,8 +86,9 @@ const NotificationScreen = () => {
         {notifGetData.data?.length > 0 ? (
           notifGetData.data.map((item, index) => {
             return (
-              <Box key={item.id}>
+              <Box key={`gg-${index}`}>
                 <NotificationItem
+                  key={item.id}
                   date={item.timestamp}
                   message={item.notif_message}
                 />

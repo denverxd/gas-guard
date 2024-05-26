@@ -136,8 +136,9 @@ const HistoryScreen = () => {
         {historyGetData.data?.length > 0 ? (
           historyGetData.data.map((item, index) => {
             return (
-              <Box key={item.id}>
+              <Box key={`gg-${index}`}>
                 <HistoryItem
+                  key={item.id}
                   gasValue={item.ppm}
                   datetime={item.timestamp}
                   statusType={item.status_type}

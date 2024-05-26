@@ -15,9 +15,15 @@ import {
 import React, {useContext} from 'react';
 import VersionText from '../../components/VersionText';
 import {MainNavigatorContext} from '../../navigation/MainNavigator';
+import {setStoreData} from '../../libraries/helpers';
 
 const SettingsScreen = ({navigation}) => {
   const {setIsSignedIn} = useContext(MainNavigatorContext);
+
+  const onSignOutPress = () => {
+    setStoreData('user_data', null);
+    setIsSignedIn(false);
+  };
 
   return (
     <Box w="100%" h="$full" p={20}>
@@ -71,7 +77,7 @@ const SettingsScreen = ({navigation}) => {
           mt={10}
           justifyContent="space-between"
           bg="white"
-          onPress={() => setIsSignedIn(false)}>
+          onPress={onSignOutPress}>
           <HStack alignItems="center" gap={10}>
             <ButtonIcon as={LogOutIcon} />
             <ButtonText textAlign="left">Sign Out</ButtonText>
