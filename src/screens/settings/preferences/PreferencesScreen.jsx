@@ -110,6 +110,25 @@ const PreferencesScreen = () => {
     prefPutData.execute('/preferences', params);
   };
 
+  const onTogglePress = val => {
+    if (val) {
+      Alert.alert(
+        'Enable SMS',
+        'Are you sure you want to enable SMS? This may charge your SMS notification service. Do you want to continue?',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {text: 'Continue', onPress: () => onChangeField('enable_sms', true)},
+        ],
+      );
+    } else {
+      onChangeField('enable_sms', false);
+    }
+  };
+
   return (
     <ScrollView>
       <Box w="$full" style={{alignSelf: 'center'}}>
@@ -213,7 +232,7 @@ const PreferencesScreen = () => {
               defaultValue={true}
               size="md"
               value={preferences.enable_sms}
-              onToggle={value => onChangeField('enable_sms', value)}
+              onToggle={value => onTogglePress(value)}
             />
             <Text size="lg" color="white" bold>
               Enable SMS
