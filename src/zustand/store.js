@@ -44,10 +44,10 @@ export const usePostData = create(set => ({
 export const usePutData = create(set => ({
   ...initialState,
 
-  execute: async url => {
+  execute: async (url, data = {}) => {
     set({...initialState, loading: true});
     try {
-      const res = await axios.put(BASE_URL + url);
+      const res = await axios.put(BASE_URL + url, data);
       set({...initialState, success: true, data: res.data});
     } catch (err) {
       console.error('Error in put data:', err);

@@ -9,7 +9,7 @@ import UpdatePinScreen from '../screens/settings/pin/UpdatePinScreen';
 import PreferencesScreen from '../screens/settings/preferences/PreferencesScreen';
 import HistoryScreen from '../screens/history/HistoryScreen';
 import {useAblyChannel} from '../libraries/pushNotification/ablyHooks';
-import {getStoreData} from '../libraries/helpers';
+import {getStoreData, setStoreData} from '../libraries/helpers';
 
 const Stack = createNativeStackNavigator();
 export const MainNavigatorContext = React.createContext();
@@ -32,8 +32,16 @@ const MainNavigator = () => {
 
   const checkUserLogin = async () => {
     let userData = await getStoreData('user_data');
+    let rememberMeData = await getStoreData('remember_me');
     if (userData) {
-      setIsSignedIn(true);
+      if (rememberMeData) {
+        rememberMeData = JSON.parse(rememberMeData);
+        if (rememberMeData?.value == true) {
+          setIsSignedIn(true);
+        } else {
+          setStoreData('user_data', null);
+        }
+      }
     }
   };
 

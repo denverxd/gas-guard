@@ -304,7 +304,7 @@ const SignUpScreen = ({navigation}) => {
         <Button
           action="primary"
           style={{borderRadius: 999}}
-          disabled={postData.loading}
+          isDisabled={postData.loading}
           onPress={() => onSignUpPress()}>
           {postData.loading ? (
             <ButtonSpinner />

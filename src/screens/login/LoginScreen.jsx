@@ -36,9 +36,12 @@ import messaging from '@react-native-firebase/messaging';
 import {getUniqueId} from 'react-native-device-info';
 import {usePostData} from '../../zustand/store';
 import {Alert} from 'react-native';
-import {handleCommonErrorRequest, setStoreData} from '../../libraries/helpers';
-import Notification from '../../libraries/pushNotification/NotificationService';
-import PushNotification from 'react-native-push-notification';
+import {
+  getStoreData,
+  handleCommonErrorRequest,
+  setStoreData,
+} from '../../libraries/helpers';
+import {useFocusEffect} from '@react-navigation/native';
 
 const LoginScreen = ({navigation}) => {
   const {setIsSignedIn} = useContext(MainNavigatorContext);
@@ -47,14 +50,21 @@ const LoginScreen = ({navigation}) => {
   const [showPin, setShowPin] = useState(false);
   const [isLoginInvalid, setIsLoginInvalid] = useState(false);
   const [loginFields, setLoginFields] = useState({
-    mobile: '9123456789',
-    pin: '222979',
+    mobile: '',
+    pin: '',
   });
   const [token, setToken] = useState('');
   const [deviceId, setDeviceId] = useState('');
+  const [rememberMe, setRememberMe] = useState(true);
 
   const loginPostData = usePostData();
   // const notif = Notification.configure;
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getLastMobileLogin();
+    }, []),
+  );
 
   useEffect(() => {
     getFcmToken();
@@ -68,8 +78,15 @@ const LoginScreen = ({navigation}) => {
         setIsSignedIn(true);
         setIsLoginInvalid(false);
         const user_data = JSON.stringify(loginPostData.data);
+        const userMobile = loginPostData.data.mobile || '';
+        const remember_me = JSON.stringify({
+          value: rememberMe,
+          mobile: userMobile,
+        });
         console.log({user_data});
         setStoreData('user_data', user_data);
+        setStoreData('remember_me', remember_me);
+        setStoreData('last_mobile', userMobile);
       } else if (loginPostData.error) {
         if (handleCommonErrorRequest(loginPostData)) return;
 
@@ -104,6 +121,13 @@ const LoginScreen = ({navigation}) => {
     setShowPin(showPin => {
       return !showPin;
     });
+  };
+
+  const getLastMobileLogin = async () => {
+    let lastMobileLogin = await getStoreData('last_mobile');
+    if (lastMobileLogin) {
+      onChangeField('mobile', lastMobileLogin);
+    }
   };
 
   const onChangeField = (field, value) => {
@@ -224,6 +248,7 @@ const LoginScreen = ({navigation}) => {
                     placeholder="PIN (6 digit)"
                     bg="$white"
                     keyboardType="number-pad"
+                    maxLength={6}
                     value={loginFields.pin}
                     onChangeText={text => onChangeField('pin', text)}
                   />
@@ -249,7 +274,7 @@ const LoginScreen = ({navigation}) => {
         <Button
           action="primary"
           onPress={onSignInPress}
-          disabled={loginPostData.loading}>
+          isDisabled={loginPostData.loading}>
           {loginPostData.loading ? (
             <ButtonSpinner />
           ) : (
@@ -259,7 +284,12 @@ const LoginScreen = ({navigation}) => {
         <Box>
           <HStack style={{justifyContent: 'space-between'}}>
             {/* Remember checkbox */}
-            <Checkbox aria-label="Remember me" size="sm">
+            <Checkbox
+              aria-label="Remember me"
+              size="sm"
+              defaultIsChecked={true}
+              value={rememberMe}
+              onChange={value => setRememberMe(value)}>
               <CheckboxIndicator mr="$2">
                 <CheckboxIcon as={CheckIcon} />
               </CheckboxIndicator>
