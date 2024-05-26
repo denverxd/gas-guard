@@ -30,11 +30,16 @@ import {
   EyeOffIcon,
   LockIcon,
   SmartphoneIcon,
+  XIcon,
 } from 'lucide-react-native';
 import VersionText from '../../components/VersionText';
 import messaging from '@react-native-firebase/messaging';
 import {getUniqueId} from 'react-native-device-info';
-import {useGetData, usePostData} from '../../zustand/store';
+import {
+  useGetData,
+  usePostData,
+  usePostForgotPinData,
+} from '../../zustand/store';
 import {Alert} from 'react-native';
 import {
   getStoreData,
@@ -42,8 +47,27 @@ import {
   setStoreData,
 } from '../../libraries/helpers';
 import {useFocusEffect} from '@react-navigation/native';
+import PushNotification from 'react-native-push-notification';
+import {Modal} from '@gluestack-ui/themed';
+import {ModalBackdrop} from '@gluestack-ui/themed';
+import {ModalContent} from '@gluestack-ui/themed';
+import {ModalHeader} from '@gluestack-ui/themed';
+import {ModalCloseButton} from '@gluestack-ui/themed';
+import {ModalBody} from '@gluestack-ui/themed';
+import {ModalFooter} from '@gluestack-ui/themed';
+import {Heading} from '@gluestack-ui/themed';
+import {Icon} from '@gluestack-ui/themed';
 
 const LoginScreen = ({navigation}) => {
+  PushNotification.configure({
+    onRegister: function (token) {
+      // console.log('TOKEN:', token);
+    },
+    onNotification(notification) {
+      console.log('Notification', notification);
+    },
+    popInitialNotification: true,
+  });
   const {setIsSignedIn} = useContext(MainNavigatorContext);
 
   const [isMount, setIsMount] = useState(false);
@@ -53,13 +77,16 @@ const LoginScreen = ({navigation}) => {
     mobile: '',
     pin: '',
   });
+  const [forgotMobile, setForgotMobile] = useState('');
+  const [isForgotMobilInvalid, setIsForgotMobilInvalid] = useState(false);
   const [token, setToken] = useState('');
   const [deviceId, setDeviceId] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   const loginPostData = usePostData();
   const preferencesGetData = useGetData();
-  // const notif = Notification.configure;
+  const postforgotPinData = usePostForgotPinData();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -127,6 +154,38 @@ const LoginScreen = ({navigation}) => {
     preferencesGetData.errorData,
   ]);
 
+  useEffect(() => {
+    if (isMount) {
+      console.log({postforgotPinData});
+      if (postforgotPinData.success) {
+        if (postforgotPinData.data?.msg) {
+          const notifMsg = postforgotPinData.data.msg;
+          PushNotification.localNotification({
+            channelId: 'general',
+            title: 'GasGuard New PIN',
+            message: notifMsg,
+          });
+          Alert.alert(
+            'Success',
+            'We sent you your new PIN. Check your notifications.',
+          );
+          handleShowModal(false);
+        }
+      } else if (postforgotPinData.error) {
+        if (handleCommonErrorRequest(postforgotPinData)) return;
+        setIsForgotMobilInvalid(true);
+      }
+    } else {
+      setIsMount(true);
+    }
+  }, [
+    postforgotPinData.loading,
+    postforgotPinData.success,
+    postforgotPinData.data,
+    postforgotPinData.error,
+    postforgotPinData.errorData,
+  ]);
+
   const getFcmToken = async () => {
     const fcmToken = await messaging().getToken();
 
@@ -145,6 +204,16 @@ const LoginScreen = ({navigation}) => {
     setShowPin(showPin => {
       return !showPin;
     });
+  };
+
+  const handleShowModal = val => {
+    if (val) {
+      setShowModal(true);
+    } else {
+      setForgotMobile('');
+      setIsForgotMobilInvalid(false);
+      setShowModal(false);
+    }
   };
 
   const getLastMobileLogin = async () => {
@@ -177,6 +246,13 @@ const LoginScreen = ({navigation}) => {
 
     const params = {...tempFields};
     loginPostData.execute('/login', params);
+  };
+
+  const onForgotPress = () => {
+    let tempField = forgotMobile;
+
+    const params = {mobile: tempField};
+    postforgotPinData.execute(params);
   };
 
   return (
@@ -320,7 +396,11 @@ const LoginScreen = ({navigation}) => {
               <CheckboxLabel>Remember me</CheckboxLabel>
             </Checkbox>
             {/* Forgot PIN */}
-            <Button action="primary" variant="link" rounded="$full" isDisabled>
+            <Button
+              action="primary"
+              variant="link"
+              rounded="$full"
+              onPress={() => handleShowModal(true)}>
               <ButtonText size="sm">Forgot PIN?</ButtonText>
             </Button>
           </HStack>
@@ -347,6 +427,81 @@ const LoginScreen = ({navigation}) => {
           <ButtonText>Sign Up</ButtonText>
         </Button>
       </Box>
+      <Modal
+        isOpen={showModal}
+        onClose={() => {
+          handleShowModal(false);
+        }}>
+        <ModalBackdrop />
+        <ModalContent>
+          <ModalHeader>
+            <Heading size="lg">Forgot PIN</Heading>
+            <ModalCloseButton>
+              <Icon as={XIcon} />
+            </ModalCloseButton>
+          </ModalHeader>
+          <ModalBody>
+            <FormControl isInvalid={isForgotMobilInvalid}>
+              <Center>
+                <HStack style={{alignItems: 'center'}}>
+                  <Input style={{flex: 1}}>
+                    <InputSlot px="$3" bg="$white">
+                      <InputIcon as={SmartphoneIcon} />
+                    </InputSlot>
+                    <InputSlot bg="$white" pb="$0.5">
+                      <Text>+63</Text>
+                    </InputSlot>
+                    <InputField
+                      placeholder="Mobile"
+                      bg="$white"
+                      pl="$1"
+                      keyboardType="number-pad"
+                      maxLength={10}
+                      value={forgotMobile}
+                      onChangeText={text => {
+                        setForgotMobile(text);
+                        setIsForgotMobilInvalid(false);
+                      }}
+                    />
+                  </Input>
+                </HStack>
+              </Center>
+              <FormControlError>
+                <FormControlErrorIcon as={AlertCircleIcon} />
+                <FormControlErrorText>
+                  Invalid mobile number
+                </FormControlErrorText>
+              </FormControlError>
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              variant="outline"
+              size="sm"
+              action="secondary"
+              mr="$3"
+              onPress={() => {
+                handleShowModal(false);
+              }}>
+              <ButtonText>Cancel</ButtonText>
+            </Button>
+            <Button
+              size="sm"
+              action="primary"
+              borderWidth="$0"
+              onPress={onForgotPress}
+              isDisabled={
+                postforgotPinData.loading || forgotMobile.length <= 0
+              }>
+              {postforgotPinData.loading ? (
+                <ButtonSpinner />
+              ) : (
+                <ButtonText>Submit</ButtonText>
+              )}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };

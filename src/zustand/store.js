@@ -21,7 +21,7 @@ export const useGetData = create(set => ({
       const res = await axios.get(BASE_URL + url, {params});
       set({...initialState, success: true, data: res.data});
     } catch (err) {
-      console.error('Error in get data:', err.response);
+      console.error('Error in get data:', err);
       set({...initialState, error: true, errorData: err.message});
     }
   },
@@ -33,6 +33,21 @@ export const usePostData = create(set => ({
     set({...initialState, loading: true});
     try {
       const res = await axios.post(BASE_URL + url, data);
+      set({...initialState, success: true, data: res.data});
+    } catch (err) {
+      console.error('Error in post data:', err);
+      set({...initialState, error: true, errorData: err.message});
+    }
+  },
+}));
+
+export const usePostForgotPinData = create(set => ({
+  ...initialState,
+
+  execute: async data => {
+    set({...initialState, loading: true});
+    try {
+      const res = await axios.post(BASE_URL + '/forgot-pin', data);
       set({...initialState, success: true, data: res.data});
     } catch (err) {
       console.error('Error in post data:', err);
