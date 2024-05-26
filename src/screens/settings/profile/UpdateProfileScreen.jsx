@@ -99,7 +99,6 @@ const UpdateProfileScreen = () => {
     }
 
     const params = {...tempFields};
-    console.log({params});
     putProfileData.execute('/users', params);
   };
 

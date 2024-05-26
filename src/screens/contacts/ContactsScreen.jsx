@@ -94,9 +94,7 @@ const ContactsScreen = () => {
   useEffect(() => {
     if (isMount) {
       if (contactsGetData.success) {
-        console.log('Contacts successfully loaded', {
-          contactsGetData: contactsGetData.data,
-        });
+        console.log('Contacts successfully loaded');
         setListData(contactsGetData.data);
       } else if (contactsGetData.error) {
         if (handleCommonErrorRequest(contactsGetData)) return;

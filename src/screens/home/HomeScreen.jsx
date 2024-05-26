@@ -11,21 +11,47 @@ import {Box, Text} from '@gluestack-ui/themed';
 import {primaryColor} from '../../constant/colors';
 import {Text as SvgText} from 'react-native-svg';
 import GGAbly from '../../libraries/gasGuardAbly.js';
+import {getStoreData} from '../../libraries/helpers.jsx';
+import {useFocusEffect} from '@react-navigation/native';
 
 const HomeScreen = ({}) => {
   const [gasValue, setGasValue] = useState(0);
+  const [preferences, setPreferences] = useState({
+    danger_threshold: 650,
+    enable_sms: false,
+    history_interval: 1,
+    id: 1,
+    warning_threshold: 350,
+  });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getPreferences();
+    }, []),
+  );
 
   useEffect(() => {
     handleAblySubscribe();
   }, []);
 
+  const getPreferences = async () => {
+    let tempPref = await getStoreData('preferences_data');
+    if (tempPref) {
+      tempPref = JSON.parse(tempPref);
+      setPreferences({...tempPref});
+    }
+  };
+
   const handleProgressColor = value => {
     let color = 'green';
     let status = 'Safe';
-    if (value > 650) {
+    if (value > parseInt(preferences.danger_threshold)) {
       color = 'red';
       status = 'Danger';
-    } else if (value > 350 && value <= 650) {
+    } else if (
+      value > parseInt(preferences.warning_threshold) &&
+      value <= parseInt(preferences.danger_threshold)
+    ) {
       color = 'orange';
       status = 'Warning';
     } else {

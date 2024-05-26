@@ -21,7 +21,7 @@ export const useGetData = create(set => ({
       const res = await axios.get(BASE_URL + url, {params});
       set({...initialState, success: true, data: res.data});
     } catch (err) {
-      console.error('Error in get data:', err);
+      console.error('Error in get data:', err.response);
       set({...initialState, error: true, errorData: err.message});
     }
   },

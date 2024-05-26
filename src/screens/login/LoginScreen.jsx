@@ -34,7 +34,7 @@ import {
 import VersionText from '../../components/VersionText';
 import messaging from '@react-native-firebase/messaging';
 import {getUniqueId} from 'react-native-device-info';
-import {usePostData} from '../../zustand/store';
+import {useGetData, usePostData} from '../../zustand/store';
 import {Alert} from 'react-native';
 import {
   getStoreData,
@@ -58,11 +58,13 @@ const LoginScreen = ({navigation}) => {
   const [rememberMe, setRememberMe] = useState(true);
 
   const loginPostData = usePostData();
+  const preferencesGetData = useGetData();
   // const notif = Notification.configure;
 
   useFocusEffect(
     React.useCallback(() => {
       getLastMobileLogin();
+      preferencesGetData.execute('/preferences');
     }, []),
   );
 
@@ -101,6 +103,28 @@ const LoginScreen = ({navigation}) => {
     loginPostData.data,
     loginPostData.error,
     loginPostData.errorData,
+  ]);
+
+  useEffect(() => {
+    if (isMount) {
+      console.log({preferencesGetData});
+      if (preferencesGetData.success) {
+        console.log('Successfully get preferences');
+        const preferences_data = JSON.stringify(preferencesGetData.data);
+        setStoreData('preferences_data', preferences_data);
+      } else if (preferencesGetData.error) {
+        if (handleCommonErrorRequest(preferencesGetData, false)) return;
+        console.log('Error getting preferences');
+      }
+    } else {
+      setIsMount(true);
+    }
+  }, [
+    preferencesGetData.loading,
+    preferencesGetData.success,
+    preferencesGetData.data,
+    preferencesGetData.error,
+    preferencesGetData.errorData,
   ]);
 
   const getFcmToken = async () => {

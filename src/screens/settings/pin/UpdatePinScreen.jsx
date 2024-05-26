@@ -93,7 +93,6 @@ const UpdatePinScreen = () => {
     let tempUser = await getStoreData('user_data');
     if (tempUser) {
       tempUser = JSON.parse(tempUser);
-      console.log({tempUser});
       setUserData({...tempUser});
     }
   };
@@ -126,7 +125,6 @@ const UpdatePinScreen = () => {
     tempFields.pin = newPin;
 
     const params = {...tempFields};
-    console.log({params});
     putProfileData.execute('/users', params);
   };
 
