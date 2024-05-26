@@ -74,10 +74,11 @@ export const usePutData = create(set => ({
 export const useDeleteData = create(set => ({
   ...initialState,
 
-  execute: async url => {
+  execute: async (url, data = {}) => {
+    console.log({YESDATA: data});
     set({...initialState, loading: true});
     try {
-      const res = await axios.delete(BASE_URL + url);
+      const res = await axios.delete(BASE_URL + url, {data});
       set({...initialState, success: true, data: res.data});
     } catch (err) {
       console.error('Error in delete:', err);

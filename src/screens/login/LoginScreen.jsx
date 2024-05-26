@@ -275,42 +275,6 @@ const LoginScreen = ({navigation}) => {
       {/* Form */}
       <Box w={300} style={{borderWidth: 0, alignSelf: 'center'}}>
         <FormControl isInvalid={isLoginInvalid}>
-          {/* <FormControl>
-            <Center>
-              <HStack style={{alignItems: 'center'}}>
-                <Input style={{flex: 1}}>
-                  <InputSlot px="$3" bg="$white">
-                    <InputIcon as={SmartphoneIcon} />
-                  </InputSlot>
-                  <InputField
-                    placeholder="Token"
-                    bg="$white"
-                    // keyboardType="number-pad"
-                    value={token}
-                    // onChangeText={text => onChangeField('mobile', text)}
-                  />
-                </Input>
-              </HStack>
-            </Center>
-          </FormControl>
-          <FormControl>
-            <Center>
-              <HStack style={{alignItems: 'center'}}>
-                <Input style={{flex: 1}}>
-                  <InputSlot px="$3" bg="$white">
-                    <InputIcon as={SmartphoneIcon} />
-                  </InputSlot>
-                  <InputField
-                    placeholder="Token"
-                    bg="$white"
-                    // keyboardType="number-pad"
-                    value={deviceId}
-                    // onChangeText={text => onChangeField('mobile', text)}
-                  />
-                </Input>
-              </HStack>
-            </Center>
-          </FormControl> */}
           {/* Mobile Input */}
           <FormControl>
             <Center>
