@@ -28,7 +28,7 @@ export const setStoreData = async (key, value) => {
   }
 };
 
-export const getStoreData = async (key, value) => {
+export const getStoreData = async key => {
   try {
     const jsonValue = await AsyncStorage.getItem(key);
     return jsonValue != null ? JSON.parse(jsonValue) : null;

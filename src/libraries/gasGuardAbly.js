@@ -6,6 +6,7 @@ const ABLY_CLIENT_ID = 'gasguard';
 const GG_CHANNELS = {
   meter: 'gasguardmainchannel',
   notif: 'gg-notif',
+  ipChecker: 'ipchecker',
 };
 
 const client = new Ably.Realtime({

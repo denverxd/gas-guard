@@ -36,6 +36,7 @@ import VersionText from '../../components/VersionText';
 import messaging from '@react-native-firebase/messaging';
 import {getUniqueId} from 'react-native-device-info';
 import {
+  getBaseUrl,
   useGetData,
   usePostData,
   usePostForgotPinData,
@@ -91,7 +92,7 @@ const LoginScreen = ({navigation}) => {
   useFocusEffect(
     React.useCallback(() => {
       getLastMobileLogin();
-      preferencesGetData.execute('/preferences');
+      getPreferences();
     }, []),
   );
 
@@ -185,6 +186,26 @@ const LoginScreen = ({navigation}) => {
     postforgotPinData.error,
     postforgotPinData.errorData,
   ]);
+
+  const getPreferences = async () => {
+    let isBaseUrl = await getBaseUrl();
+    if (isBaseUrl) {
+      preferencesGetData.execute('/preferences');
+    } else {
+      Alert.alert(
+        'Network Error',
+        'Cannot connect to gas detector device. Do you want to retry?',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {text: 'Retry', onPress: () => getPreferences()},
+        ],
+      );
+    }
+  };
 
   const getFcmToken = async () => {
     const fcmToken = await messaging().getToken();

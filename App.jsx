@@ -13,6 +13,7 @@ import {Alert} from 'react-native';
 import {Provider} from 'react-redux';
 import store from './src/redux/index.js';
 import PushNotification from 'react-native-push-notification';
+import {setStoreData} from './src/libraries/helpers.jsx';
 
 const App = () => {
   PushNotification.configure({
@@ -41,6 +42,21 @@ const App = () => {
       },
       created => console.log(`createChannel returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
     );
+
+    const ipCheckerChannel = GGAbly.GG_CHANNELS.ipChecker;
+    GGAbly.getChannelSub(ipCheckerChannel).subscribe(message => {
+      const data = JSON.parse(message.data);
+      if (data?.msg == 'IPSENT') {
+        const baseUrl = {val: `http://${data.val}:8000`};
+        setStoreData('base_url', baseUrl);
+      }
+    });
+    setTimeout(() => {
+      GGAbly.getChannelSub(ipCheckerChannel).publish(
+        GGAbly.GG_CHANNELS.ipChecker,
+        JSON.stringify({msg: 'IPCHECK'}),
+      );
+    }, 1000);
 
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
